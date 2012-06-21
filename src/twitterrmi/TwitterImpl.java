@@ -71,6 +71,6 @@ public class TwitterImpl implements TwitterRemoto {
 
     @Override
     public String testeNovo() throws RemoteException {
-        return "Novo Teste!!!";
+        return "Novo Teste!!!!";
     }
 }
