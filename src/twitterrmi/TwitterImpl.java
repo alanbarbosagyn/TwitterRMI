@@ -62,7 +62,7 @@ public class TwitterImpl implements TwitterRemoto {
             registry.rebind(uriBancoRemoto, stubRemoto);
             System.out.println("Objeto remoto exportado com nome "
                     + uriBancoRemoto);
-            System.out.println("\nObjeto remoto servidor do ar!!!");
+            System.out.println("\nObjeto remoto servidor do ar!!!!");
 
         } catch (RemoteException e) {
             e.printStackTrace();
