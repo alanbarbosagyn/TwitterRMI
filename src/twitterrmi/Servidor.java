@@ -35,7 +35,7 @@ public class Servidor implements ServidorRemoto {
 //    }
 
     public static void main(String[] args) {
-        String ipLocal = "194.168.1.109";
+        String ipLocal = "194.168.1.100";
         String enderecoRegistry = ipLocal;
         String enderecoIPLocal = ipLocal;
         String nomeDoBanco = "Alan";
@@ -49,7 +49,7 @@ public class Servidor implements ServidorRemoto {
             Servidor banco = new Servidor();
             
             // cria o registry para evitar problemas.
-            LocateRegistry.createRegistry(1099);
+            //LocateRegistry.createRegistry(1099);
 
             ServidorRemoto stubRemoto = (ServidorRemoto) UnicastRemoteObject.exportObject(banco, 0);
 
