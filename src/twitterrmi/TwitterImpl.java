@@ -68,4 +68,9 @@ public class TwitterImpl implements TwitterRemoto {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public String testeNovo() throws RemoteException {
+        return "Novo Teste!!!";
+    }
 }
