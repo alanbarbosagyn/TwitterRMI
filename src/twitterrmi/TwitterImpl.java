@@ -6,12 +6,7 @@ package twitterrmi;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
 import twitter4j.*;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
@@ -23,71 +18,29 @@ import twitter4j.conf.ConfigurationBuilder;
  *
  * @author alan
  */
-public class TwitterImpl implements TwitterRemoto {
+public class TwitterImpl {
 
     private String nome;
+    private Twitter twitter;
     
     // token obtido previamente para usuario do twitter 
     private String token = "317250090-jI03JMRjKrz5E4xStaFESg6gNSm4TgF0rZ1aKbHQ";
     private String segredoToken = "e16ZnSlqyU1ZINeKVykqxaDRtzNGni4WJ7rW9Q1xHj0";
     private long idCredencial = 317250090;
     
-    // chaves da aplicacao
-    private String Consumer__Key = "pP42Jg7DQAyofbleGpkw";
-    private final String Consumer_Secret = "MSosVcUirA9f4omrtbq6GjQMB5vLLhQtadQnKe3Gww";
+    // chaves da aplicacao atributos estáticos
+    private final static String Consumer__Key = "pP42Jg7DQAyofbleGpkw";
+    private final static String Consumer_Secret = "MSosVcUirA9f4omrtbq6GjQMB5vLLhQtadQnKe3Gww";
 
     public TwitterImpl(String nome) {
         this.nome = nome;
-    }
-
-    @Override
-    public String teste() {
-        return "Olá mundo!!!";
-    }
-
-    public static void main(String[] args) {
-
-        String ipLocal = "localhost";
-        String enderecoRegistry = ipLocal;
-        String nomeDoObjeto = "Alan";
-        String enderecoIPLocal = ipLocal;
-
-        TwitterImpl twitter = new TwitterImpl("Alan");
-        try {
-            twitter.modificaStatusOAuth("Boa noite aos ficam!");
-
-
-            //        try {
-            //            TwitterImpl twitter = new TwitterImpl(nomeDoObjeto);
-            //
-            //            TwitterRemoto stubRemoto = (TwitterRemoto) UnicastRemoteObject.exportObject(twitter, 0);
-            //
-            //            Registry registry = LocateRegistry.getRegistry(enderecoRegistry);
-            //
-            //            String uriBancoRemoto = "rmi://" + nomeDoObjeto;
-            //
-            //            registry.rebind(uriBancoRemoto, stubRemoto);
-            //            System.out.println("Objeto remoto exportado com nome "
-            //                    + uriBancoRemoto);
-            //            System.out.println("\nObjeto remoto servidor do ar!!!!");
-            //
-            //        } catch (RemoteException e) {
-            //            e.printStackTrace();
-            //        }
-        } catch (Exception ex) {
-            Logger.getLogger(TwitterImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @Override
-    public String testeNovo() throws RemoteException {
-        return "Novo Teste!!!!";
+        this.twitter = new TwitterFactory().getInstance();    
     }
 
     public void publicaTweetXAuth() {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
 
-        configurationBuilder.setOAuthConsumerKey(this.getConsumer__Key());
+        configurationBuilder.setOAuthConsumerKey(this.Consumer__Key);
         configurationBuilder.setOAuthConsumerSecret(this.Consumer_Secret);
         Configuration configuration = configurationBuilder.build();
 
@@ -111,17 +64,12 @@ public class TwitterImpl implements TwitterRemoto {
         }
     }
 
-    public void modificaStatusOAuth(String novoStatus) throws TwitterException {
-
-        TwitterFactory factory = new TwitterFactory();
+    public void  modificaStatusOAuth(String novoStatus) throws TwitterException {
         AccessToken accessToken = new AccessToken(getToken(), getSegredoToken());
-
-        Twitter twitter = factory.getInstance();
-        twitter.setOAuthConsumer(this.Consumer__Key, this.Consumer_Secret);
+        twitter.setOAuthConsumer(TwitterImpl.Consumer__Key, TwitterImpl.Consumer_Secret);
         twitter.setOAuthAccessToken(accessToken);
         Status status = twitter.updateStatus(novoStatus);
         System.out.println("Successfully updated the status to [" + status.getText() + "].");
-        System.exit(0);
 
     }
 
@@ -133,7 +81,7 @@ public class TwitterImpl implements TwitterRemoto {
 
         // The factory instance is re-useable and thread safe.
         Twitter twitter = new TwitterFactory().getInstance();
-        twitter.setOAuthConsumer(this.getConsumer__Key(), this.Consumer_Secret);
+        twitter.setOAuthConsumer(Consumer__Key, this.Consumer_Secret);
         RequestToken requestToken = twitter.getOAuthRequestToken();
         AccessToken accessToken = null;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -157,34 +105,38 @@ public class TwitterImpl implements TwitterRemoto {
             }
         }
         // persist to the accessToken for future reference.
-        System.out.println("id credencial = "
-                + twitter.verifyCredentials().getId());
-        System.out.println("token         = " + accessToken.getToken());
-        System.out.println("segredoToken  = " + accessToken.getTokenSecret());
-        System.exit(0);
+//        System.out.println("id credencial = "
+//                + twitter.verifyCredentials().getId());
+//        System.out.println("token         = " + accessToken.getToken());
+//        System.out.println("segredoToken  = " + accessToken.getTokenSecret());
+//        System.exit(0);
         
         /* Podemos trabalhar de forma que permita o acesso por outra conta. */
-//        this.setToken(accessToken.getToken());
-//        this.setSegredoToken(accessToken.getTokenSecret());
-//        this.setIdCredencial(accessToken.getUserId());
+        this.setToken(accessToken.getToken());
+        this.setSegredoToken(accessToken.getTokenSecret());
+        this.setIdCredencial(accessToken.getUserId());
     }
 
-    public void pesquisa(String pesquisa) {
-        Twitter twitter = new TwitterFactory().getInstance();
+    public ArrayList<String> pesquisa(String pesquisa) {
         Query query = new Query(pesquisa);
         QueryResult result;
-        System.out.println("Pesquisa " + pesquisa);
+        ArrayList<String> resultado = null;
         try {
             result = twitter.search(query);
-            for (Tweet tweet : result.getTweets()) {
-                System.out.println(tweet.getFromUser() + "@"
-                        + tweet.getGeoLocation() + " :" + tweet.getText());
-                System.out.println();
-            }
+            resultado = retornaTwitters(result);
         } catch (TwitterException e) {
             e.printStackTrace();
         }
-        System.out.println("---");
+        return resultado;
+    }
+
+    private ArrayList<String> retornaTwitters(QueryResult result) {
+        ArrayList<String> resultado = new ArrayList<String>();
+        for (Tweet tweet : result.getTweets()) {
+            resultado.add(tweet.getFromUser() + "@"
+                    + tweet.getGeoLocation() + " :" + tweet.getText());
+        }
+        return resultado;
     }
 
     /**
@@ -241,13 +193,6 @@ public class TwitterImpl implements TwitterRemoto {
      */
     public void setSegredoToken(String segredoToken) {
         this.segredoToken = segredoToken;
-    }
-
-    /**
-     * @param Consumer__Key the Consumer__Key to set
-     */
-    public void setConsumer__Key(String Consumer__Key) {
-        this.Consumer__Key = Consumer__Key;
     }
 
     /**

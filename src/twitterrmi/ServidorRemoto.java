@@ -11,10 +11,8 @@ import java.rmi.RemoteException;
  *
  * @author alan
  */
-public interface TwitterRemoto extends Remote{
+public interface ServidorRemoto extends Remote{
     
-    public String teste() throws RemoteException;
-    
-    public String testeNovo() throws RemoteException;
+    public void postaTwitter(String  twitt) throws RemoteException;
        
 }
