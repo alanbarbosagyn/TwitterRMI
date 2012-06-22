@@ -18,12 +18,11 @@ public class Servidor implements ServidorRemoto {
 
     private TwitterImpl twitter = null;
     private final String nome = "Servidor";
-    
-    
-    public Servidor(){
+
+    public Servidor() {
         this.twitter = new TwitterImpl("Alan");
     }
-    
+
 //    private static final Servidor servidor = new Servidor();
 //
 //    private Servidor() {
@@ -33,12 +32,17 @@ public class Servidor implements ServidorRemoto {
 //    public static Servidor getEstancia() {
 //        return new Servidor();
 //    }
-
+    
     public static void main(String[] args) {
-        String ipLocal = "194.168.1.100";
-        String enderecoRegistry = ipLocal;
-        String enderecoIPLocal = ipLocal;
-        String nomeDoBanco = "Alan";
+        
+        /**
+         *  Atenção: Esses dois parametros são de grande importancia. 
+         */
+        
+        String enderecoIPLocal = "127.0.0.1";
+        String nomeServidor = "Servidor";
+        
+        /* ########################  */
 
         if (enderecoIPLocal != null) {
             System.setProperty("java.rmi.server.hostname", enderecoIPLocal);
@@ -47,15 +51,13 @@ public class Servidor implements ServidorRemoto {
 
         try {
             Servidor banco = new Servidor();
-            
+
             // cria o registry para evitar problemas.
-            //LocateRegistry.createRegistry(1099);
+            Registry registry =  LocateRegistry.createRegistry(2020);
 
             ServidorRemoto stubRemoto = (ServidorRemoto) UnicastRemoteObject.exportObject(banco, 0);
 
-            Registry registry = LocateRegistry.getRegistry(enderecoRegistry);
-
-            String uriBancoRemoto = "rmi://" + nomeDoBanco;
+            String uriBancoRemoto = "rmi://" + nomeServidor;
 
             registry.rebind(uriBancoRemoto, stubRemoto);
             System.out.println("Objeto remoto exportado com nome "
@@ -64,6 +66,7 @@ public class Servidor implements ServidorRemoto {
 
         } catch (RemoteException e) {
             e.printStackTrace();
+            System.exit(0);
         }
 
     }
@@ -76,7 +79,6 @@ public class Servidor implements ServidorRemoto {
             throw new RemoteException("Problemas ao postar o Twitt!");
         }
     }
-
     /**
      * @return the twitter
      */

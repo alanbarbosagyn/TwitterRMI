@@ -34,7 +34,15 @@ public class TwitterImpl {
 
     public TwitterImpl(String nome) {
         this.nome = nome;
-        this.twitter = new TwitterFactory().getInstance();    
+        this.obtemInstanciaTwitter();
+    }
+    
+    private void obtemInstanciaTwitter(){
+        this.twitter = new TwitterFactory().getInstance();  
+    }
+    
+    public TwitterImpl(){
+        this.obtemInstanciaTwitter();
     }
 
     public void publicaTweetXAuth() {

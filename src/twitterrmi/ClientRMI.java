@@ -23,14 +23,21 @@ public class ClientRMI {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String ipLocal = "194.168.1.109";
-        String enderecoRegistry = ipLocal;
-        String twitt = "Client Twitter work again!";
+        /**
+         *  Atenção: Esses dois parametros são de grande importancia. 
+         */
+        
+        String enderecoIPLocal = "127.0.0.1";
         String nomeServidor = "Servidor";
+        
+        /* ########################  */
+        
+        String enderecoRegistry = enderecoIPLocal;
+        String twitt = "Após tanto quebrar a cabeça, o trabalho a sair!";
 
         try {
 
-            Registry registry = LocateRegistry.getRegistry(enderecoRegistry);
+            Registry registry = LocateRegistry.getRegistry(enderecoRegistry, 2020);
 
             System.out.println("Lista de Objetos Remotos obtidos do registry em "
                     + enderecoRegistry);
@@ -42,7 +49,7 @@ public class ClientRMI {
             System.out.println("----\n\n");
 
             ServidorRemoto servidor;
-            servidor = (ServidorRemoto) registry.lookup(nomeServidor);
+            servidor = (ServidorRemoto) registry.lookup("rmi://"+nomeServidor);
             ServidorRemoto stubRemoto = (ServidorRemoto) UnicastRemoteObject.exportObject(servidor, 0);
 
             servidor.postaTwitter(twitt);
@@ -54,7 +61,7 @@ public class ClientRMI {
             Logger.getLogger(ClientRMI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RemoteException ex) {
             Logger.getLogger(ClientRMI.class.getName()).log(Level.SEVERE, null, ex);
-        } finally{
+        } finally {
             System.exit(0);
         }
     }
