@@ -6,6 +6,7 @@ package twitterrmi;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 /**
  *
@@ -13,5 +14,9 @@ import java.rmi.RemoteException;
  */
 public interface ServidorRemoto extends Remote {
 
-    public void postaTwitter(String twitt) throws RemoteException;
+    public void updateStatus(String twitt) throws RemoteException;
+
+    public ArrayList<String> search(String hashtag) throws RemoteException;
+
+    public ArrayList<String> retrieveStatus() throws RemoteException;
 }

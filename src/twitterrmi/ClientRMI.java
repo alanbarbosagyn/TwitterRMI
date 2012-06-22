@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,15 +30,17 @@ public class ClientRMI {
         
         String enderecoIPLocal = "127.0.0.1";
         String nomeServidor = "Servidor";
+        int porta = 2020;
         
         /* ########################  */
         
         String enderecoRegistry = enderecoIPLocal;
         String twitt = "Após tanto quebrar a cabeça, o trabalho a sair!";
+        String hashtag = "#asminapira";
 
         try {
 
-            Registry registry = LocateRegistry.getRegistry(enderecoRegistry, 2020);
+            Registry registry = LocateRegistry.getRegistry(enderecoRegistry, porta);
 
             System.out.println("Lista de Objetos Remotos obtidos do registry em "
                     + enderecoRegistry);
@@ -52,8 +55,9 @@ public class ClientRMI {
             servidor = (ServidorRemoto) registry.lookup("rmi://"+nomeServidor);
             ServidorRemoto stubRemoto = (ServidorRemoto) UnicastRemoteObject.exportObject(servidor, 0);
 
-            servidor.postaTwitter(twitt);
-            System.out.println(twitt);
+            List<String> list = servidor.retrieveStatus(); 
+            showTwitts(list);
+//            System.out.println(twitt);
 
         } catch (NotBoundException ex) {
             Logger.getLogger(ClientRMI.class.getName()).log(Level.SEVERE, null, ex);
@@ -64,5 +68,13 @@ public class ClientRMI {
         } finally {
             System.exit(0);
         }
+    }
+    
+    public static void showTwitts(List<String> twitts){
+        int i = 0;
+        for(String twiit : twitts){
+            System.out.println(i++ +" -- "+ twiit);
+        }
+        System.out.println("--------------------");
     }
 }

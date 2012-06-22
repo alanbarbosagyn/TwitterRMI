@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import twitter4j.TwitterException;
 
 /**
@@ -15,12 +16,13 @@ import twitter4j.TwitterException;
  * @author Alan
  */
 public class Servidor implements ServidorRemoto {
+    private static int porta;
 
-    private TwitterImpl twitter = null;
+    private TwitterImplementado twitterImp = null;
     private final String nome = "Servidor";
 
     public Servidor() {
-        this.twitter = new TwitterImpl("Alan");
+        this.twitterImp = new TwitterImplementado("Alan");
     }
 
 //    private static final Servidor servidor = new Servidor();
@@ -32,17 +34,19 @@ public class Servidor implements ServidorRemoto {
 //    public static Servidor getEstancia() {
 //        return new Servidor();
 //    }
-    
     public static void main(String[] args) {
-        
+
         /**
-         *  Atenção: Esses dois parametros são de grande importancia. 
+         * Atenção: Esses dois parametros são de grande importancia.
          */
-        
         String enderecoIPLocal = "127.0.0.1";
         String nomeServidor = "Servidor";
+        int porta = 2020;
         
-        /* ########################  */
+
+        /*
+         * ########################
+         */
 
         if (enderecoIPLocal != null) {
             System.setProperty("java.rmi.server.hostname", enderecoIPLocal);
@@ -53,15 +57,15 @@ public class Servidor implements ServidorRemoto {
             Servidor banco = new Servidor();
 
             // cria o registry para evitar problemas.
-            Registry registry =  LocateRegistry.createRegistry(2020);
+            Registry registry = LocateRegistry.createRegistry(porta);
 
             ServidorRemoto stubRemoto = (ServidorRemoto) UnicastRemoteObject.exportObject(banco, 0);
 
-            String uriBancoRemoto = "rmi://" + nomeServidor;
+            String uriServidorRemoto = "rmi://" + nomeServidor;
 
-            registry.rebind(uriBancoRemoto, stubRemoto);
+            registry.rebind(uriServidorRemoto, stubRemoto);
             System.out.println("Objeto remoto exportado com nome "
-                    + uriBancoRemoto);
+                    + uriServidorRemoto);
             System.out.println("\nObjeto remoto servidor do ar!");
 
         } catch (RemoteException e) {
@@ -72,25 +76,39 @@ public class Servidor implements ServidorRemoto {
     }
 
     @Override
-    public void postaTwitter(String twitt) throws RemoteException {
+    public void updateStatus(String twitt) throws RemoteException {
         try {
-            this.twitter.modificaStatusOAuth(twitt);
+            this.twitterImp.modificaStatusOAuth(twitt);
         } catch (TwitterException ex) {
             throw new RemoteException("Problemas ao postar o Twitt!");
         }
     }
+
+    @Override
+    public ArrayList<String> search(String hashtag) throws RemoteException {
+        ArrayList<String> resultado = null;
+        resultado = this.twitterImp.pesquisa(hashtag);
+        return resultado;
+    }
+
+    public ArrayList<String> retrieveStatus() throws RemoteException {
+        ArrayList<String> resultado = null;
+        resultado = this.twitterImp.recuperaStatus();
+        return resultado;
+    }
+
     /**
      * @return the twitter
      */
-    public TwitterImpl getTwitter() {
-        return twitter;
+    public TwitterImplementado getTwitter() {
+        return twitterImp;
     }
 
     /**
      * @param twitter the twitter to set
      */
-    public void setTwitter(TwitterImpl twitter) {
-        this.twitter = twitter;
+    public void setTwitter(TwitterImplementado twitter) {
+        this.twitterImp = twitter;
     }
 
     /**
