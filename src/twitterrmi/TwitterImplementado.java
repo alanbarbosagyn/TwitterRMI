@@ -4,12 +4,11 @@
  */
 package twitterrmi;
 
+import com.sun.xml.internal.fastinfoset.tools.StAX2SAXReader;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import twitter4j.*;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.BasicAuthorization;
@@ -30,8 +29,8 @@ public class TwitterImplementado {
     private String segredoToken = "gc0QDM9joUugwGqFRY4bvkILOyK8pJbuqbCipN9ik";
     private long idCredencial = 317250090;
     // chaves da aplicacao atributos estáticos -App Twiiter
-    private final static String Consumer__Key = "GStEIcVNNtJVZtNQZV2fw";
-    private final static String Consumer_Secret = "r9e3Limkx4WPVSsN1IqINsk7mZ1fuRulJOx1WQRs";
+    private final String Consumer__Key = "GStEIcVNNtJVZtNQZV2fw";
+    private final String Consumer_Secret = "r9e3Limkx4WPVSsN1IqINsk7mZ1fuRulJOx1WQRs";
 
     public TwitterImplementado(String nome) {
         this.nome = nome;
@@ -40,6 +39,7 @@ public class TwitterImplementado {
 
     private void obtemInstanciaTwitter() {
         this.twitter = new TwitterFactory().getInstance();
+        this.setTwitterConsumerkeyAndSecret();
     }
 
     public TwitterImplementado() {
@@ -116,13 +116,13 @@ public class TwitterImplementado {
         this.idCredencial = idCredencial;
     }
 
-    private void setTwitterAcessToken() {
+    public void setTwitterAcessToken() {
         AccessToken accessToken = new AccessToken(getToken(), getSegredoToken());
-        twitter.setOAuthAccessToken(accessToken);
+        this.twitter.setOAuthAccessToken(accessToken);
     }
 
-    private void setTwitterConsumerkeyAndSecret() {
-        twitter.setOAuthConsumer(TwitterImplementado.Consumer__Key, TwitterImplementado.Consumer_Secret);
+    public void setTwitterConsumerkeyAndSecret() {
+        this.twitter.setOAuthConsumer(this.getConsumer__Key(), this.getConsumer_Secret());
     }
 
     public void publicaTweetXAuth() {
@@ -153,7 +153,6 @@ public class TwitterImplementado {
     }
 
     public void modificaStatusOAuth(String novoStatus) throws TwitterException {
-        setTwitterConsumerkeyAndSecret();
         setTwitterAcessToken();
         Status status = twitter.updateStatus(novoStatus);
         System.out.println("Successfully updated the status to [" + status.getText() + "].");
@@ -166,7 +165,7 @@ public class TwitterImplementado {
      */
     public void obtemTokenAutenticacao() throws Exception {
 
-        setTwitterConsumerkeyAndSecret();
+        //setTwitterConsumerkeyAndSecret();
         RequestToken requestToken = twitter.getOAuthRequestToken();
         AccessToken accessToken = null;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -217,54 +216,46 @@ public class TwitterImplementado {
         return resultado;
     }
 
-    public ArrayList<String> recuperaStatus() {
+    public ArrayList<String> recuperaFriendsStatus() {
         ResponseList<Status> listStatus = null;
-//        this.setTwitterConsumerkeyAndSecret();
-//        this.setTwitterAcessToken();
+        this.setTwitterAcessToken();
         try {
-            listStatus = twitter.getHomeTimeline();
+            listStatus = this.twitter.getHomeTimeline();
+        } catch (TwitterException e) {
+        }
+        return retornaListStatus(listStatus);
+    }
+
+    public ArrayList<String> recuperaUserStatus() {
+        ResponseList<Status> listStatus = null;
+        this.setTwitterAcessToken();
+        try {
+            listStatus = this.twitter.getUserTimeline();
         } catch (TwitterException e) {
         }
         return retornaListStatus(listStatus);
     }
 
     private ArrayList<String> retornaListStatus(List<Status> listStatus) {
-        ArrayList<String> ListStringStatus = null;
+        ArrayList<String> ListStringStatus = new ArrayList<String>();
         for (Status status : listStatus) {
-            ListStringStatus.add(status.getId() + " - " + status.getCreatedAt().toString() + " - " + status.getText());
-//            ListStringStatus.add(status.getId() + " - " + status.getCreatedAt().toString() + "- " +"LAT: " +status.getGeoLocation().getLongitude() +" LONG: " +status.getGeoLocation().getLatitude() + " - " + status.getPlace() +" - " + status.getText());
+            ListStringStatus.add("@" + status.getUser().getScreenName() + " - " + status.getGeoLocation() + " - " + status.getCreatedAt().toString() + " - " + status.getText());
         }
 
         return ListStringStatus;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+//            TwitterImplementado t = new TwitterImplementado();
+//            
+//            t.obtemTokenAutenticacao();
+//            
+//            System.out.println("done.");
+//            System.exit(0);
 
-        List<Status> statuses = null;
-
-        try {
-            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-
-            configurationBuilder.setOAuthConsumerKey(TwitterImplementado.Consumer__Key);
-            configurationBuilder.setOAuthConsumerSecret(TwitterImplementado.Consumer_Secret);
-            Configuration configuration = configurationBuilder.build();
-
-            Twitter twitter = new TwitterFactory(configuration).getInstance(new BasicAuthorization("alanbarbosa_gyn",
-                    "alan100691"));
-            int page = 1;
-            do {
-                statuses = twitter.getHomeTimeline();
-                for (Status status : statuses) {
-                    System.out.println("@" + status.getUser().getScreenName() + " - " + status.getText());
-                }
-                page++;
-            } while (statuses.size() > 0 && page < 10);
-            System.out.println("done.");
-            System.exit(0);
-
-        } catch (TwitterException te) {
-            te.printStackTrace();
-            System.out.println("Failed to get favorites: " + te.getMessage());
+        String[] list = {"alan", "jose", "maria", "lucas"};
+        for (int i = 0; i < 4; i++) {
+            System.out.println(list[i] + " --- " + Servidor.criptografar(list[i]));
         }
     }
 

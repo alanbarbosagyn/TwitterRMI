@@ -18,5 +18,9 @@ public interface ServidorRemoto extends Remote {
 
     public ArrayList<String> search(String hashtag) throws RemoteException;
 
-    public ArrayList<String> retrieveStatus() throws RemoteException;
+    public ArrayList<String> getFriendsStatus() throws RemoteException;
+    
+    public String logarApp(String usuario, String senha) throws RemoteException;
+    
+    public String logoutApp(String token) throws RemoteException;
 }

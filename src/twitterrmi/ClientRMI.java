@@ -35,8 +35,9 @@ public class ClientRMI {
         /* ########################  */
         
         String enderecoRegistry = enderecoIPLocal;
-        String twitt = "Após tanto quebrar a cabeça, o trabalho a sair!";
+        String twitt = "Teste Básico da app";
         String hashtag = "#asminapira";
+        String token = null;
 
         try {
 
@@ -49,14 +50,14 @@ public class ClientRMI {
                 System.out.println("   [" + i + "] " + listaRemotos[i]);
             }
 
-            System.out.println("----\n\n");
-
             ServidorRemoto servidor;
             servidor = (ServidorRemoto) registry.lookup("rmi://"+nomeServidor);
             ServidorRemoto stubRemoto = (ServidorRemoto) UnicastRemoteObject.exportObject(servidor, 0);
 
-            List<String> list = servidor.retrieveStatus(); 
-            showTwitts(list);
+            token = servidor.logarApp("alan", "123456");
+            System.out.println(token);
+            System.out.println(servidor.logoutApp("alan"));
+            System.out.println(servidor.logoutApp(token));
 //            System.out.println(twitt);
 
         } catch (NotBoundException ex) {
@@ -71,10 +72,9 @@ public class ClientRMI {
     }
     
     public static void showTwitts(List<String> twitts){
-        int i = 0;
         for(String twiit : twitts){
-            System.out.println(i++ +" -- "+ twiit);
+            System.out.println(twiit.toString());
         }
-        System.out.println("--------------------");
+        System.out.println("\n\n");
     }
 }
