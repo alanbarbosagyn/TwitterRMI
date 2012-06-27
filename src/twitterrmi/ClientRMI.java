@@ -56,9 +56,17 @@ public class ClientRMI {
 
             token = servidor.logarApp("alan", "123456");
             System.out.println(token);
-            System.out.println(servidor.logoutApp("alan"));
-            System.out.println(servidor.logoutApp(token));
-//            System.out.println(twitt);
+//            try{
+//            //servidor.logoutApp("alan");
+//            servidor.logoutApp(token);
+//            }catch(RemoteException e){
+//                System.out.println(e.getMessage());
+//            }
+            
+            showTwitts(servidor.getFriendsStatus("fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
+            showTwitts(servidor.search("#android","fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
+            showTwitts(servidor.getFriendsStatus("fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
+            showTwitts(servidor.getUserStatus("fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
 
         } catch (NotBoundException ex) {
             Logger.getLogger(ClientRMI.class.getName()).log(Level.SEVERE, null, ex);
@@ -73,7 +81,7 @@ public class ClientRMI {
     
     public static void showTwitts(List<String> twitts){
         for(String twiit : twitts){
-            System.out.println(twiit.toString());
+            System.out.println(twiit);
         }
         System.out.println("\n\n");
     }

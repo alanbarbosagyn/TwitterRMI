@@ -4,7 +4,6 @@
  */
 package twitterrmi;
 
-import com.sun.xml.internal.fastinfoset.tools.StAX2SAXReader;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -245,19 +244,19 @@ public class TwitterImplementado {
         return ListStringStatus;
     }
 
-    public static void main(String[] args) throws Exception {
+//    public static void main(String[] args) throws Exception {
 //            TwitterImplementado t = new TwitterImplementado();
 //            
 //            t.obtemTokenAutenticacao();
 //            
 //            System.out.println("done.");
 //            System.exit(0);
-
-        String[] list = {"alan", "jose", "maria", "lucas"};
-        for (int i = 0; i < 4; i++) {
-            System.out.println(list[i] + " --- " + Servidor.criptografar(list[i]));
-        }
-    }
+//
+//        String[] list = {"alan", "jose", "maria", "lucas"};
+//        for (int i = 0; i < 4; i++) {
+//            System.out.println(list[i] + " --- " + Servidor.criptografar(list[i]));
+//        }
+//    }
 
     private ArrayList<String> retornaTwitters(QueryResult result) {
         ArrayList<String> resultado = new ArrayList<String>();

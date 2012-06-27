@@ -14,13 +14,17 @@ import java.util.ArrayList;
  */
 public interface ServidorRemoto extends Remote {
 
-    public void updateStatus(String twitt) throws RemoteException;
+    public void updateStatus(String twitt, String clientToken) throws RemoteException;
 
-    public ArrayList<String> search(String hashtag) throws RemoteException;
+    public ArrayList<String> search(String hashtag, String clientToken) throws RemoteException;
 
-    public ArrayList<String> getFriendsStatus() throws RemoteException;
+    public ArrayList<String> getFriendsStatus(String clientToken) throws RemoteException;
+    
+    public ArrayList<String> getUserStatus(String clientToken) throws RemoteException;
+    
+    public void changingTwitterAccount() throws RemoteException;
     
     public String logarApp(String usuario, String senha) throws RemoteException;
     
-    public String logoutApp(String token) throws RemoteException;
+    public void logoutApp(String token) throws RemoteException;
 }

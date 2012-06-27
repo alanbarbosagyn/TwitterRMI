@@ -11,8 +11,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import org.omg.CORBA.TIMEOUT;
-import twitter4j.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import twitter4j.TwitterException;
 
 /**
@@ -23,7 +23,6 @@ public class Servidor implements ServidorRemoto {
 
     private static int porta;
     private TwitterImplementado twitterImp = null;
-    private final String nome = "Servidor";
     private HashMap users;
     private HashMap usersOnline;
 
@@ -36,34 +35,12 @@ public class Servidor implements ServidorRemoto {
         this.carregaUsers();
     }
 
-//    private static final Servidor servidor = new Servidor();
-//
-//    private Servidor() {
-//        this.twitter = new TwitterImpl("Alan");
-//    }
-//
-//    public static Servidor getEstancia() {
-//        return new Servidor();
-//    }
     /**
      * *
      * user: alan - senha: 123456 user: jose - senha: antonio user: maria -
      * senha: maria user: lucas - senha: lu12ca84
      */
     private void carregaUsers() {
-//        String[] usuarioSenha = null;
-//        usuarioSenha[0] = "alan";
-//        usuarioSenha[1] = "123456";
-//        this.users.put("fqfs", usuarioSenha);
-//        usuarioSenha[0] = "jose";
-//        usuarioSenha[1] = "antonio";
-//        this.users.put("otxj", usuarioSenha);
-//        usuarioSenha[0] = "maria";
-//        usuarioSenha[1] = "maria";
-//        this.users.put("rfwnf", usuarioSenha);
-//        usuarioSenha[0] = "lucas";
-//        usuarioSenha[1] = "lu12ca84";
-//        this.users.put("qzhfx", usuarioSenha);
         this.users.put("alan", "123456");
         this.users.put("jose", "antonio");
         this.users.put("maria", "maria");
@@ -82,9 +59,6 @@ public class Servidor implements ServidorRemoto {
          * ########################
          */
 
-        if (enderecoIPLocal != null) {
-            System.setProperty("java.rmi.server.hostname", enderecoIPLocal);
-        }
         System.out.println("Objeto remoto no endereco " + enderecoIPLocal);
 
         try {
@@ -110,31 +84,80 @@ public class Servidor implements ServidorRemoto {
     }
 
     @Override
-    public void updateStatus(String twitt) throws RemoteException {
+    public void changingTwitterAccount() throws RemoteException {
         try {
-            this.twitterImp.modificaStatusOAuth(twitt);
-        } catch (TwitterException ex) {
-            throw new RemoteException("Problemas ao postar o Twitt!");
+            this.twitterImp.obtemTokenAutenticacao();
+        } catch (Exception ex) {
+            Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
+
         }
     }
 
     @Override
-    public ArrayList<String> search(String hashtag) throws RemoteException {
+    public void updateStatus(String twitt, String clientToken) throws RemoteException {
+        try {
+            this.verificaOnline(clientToken);
+            this.twitterImp.modificaStatusOAuth(twitt);
+        } catch (TwitterException ex) {
+            throw new RemoteException("Problemas ao postar o Twitt!");
+        } catch (NotAuthenticatedException ex) {
+            throw ex;
+        }
+    }
+
+    @Override
+    public ArrayList<String> search(String hashtag, String clientToken) throws RemoteException {
+        this.verificaOnline(clientToken);
         ArrayList<String> resultado = null;
         resultado = this.twitterImp.pesquisa(hashtag);
         return resultado;
     }
 
-    public ArrayList<String> getFriendsStatus() throws RemoteException {
+    @Override
+    public ArrayList<String> getFriendsStatus(String clientToken) throws RemoteException {
+        this.verificaOnline(clientToken);
         ArrayList<String> resultado = null;
         resultado = this.twitterImp.recuperaFriendsStatus();
         return resultado;
     }
 
-    public ArrayList<String> getUserStatus() throws RemoteException {
+    @Override
+    public ArrayList<String> getUserStatus(String clientToken) throws RemoteException {
+        this.verificaOnline(clientToken);
         ArrayList<String> resultado = null;
         resultado = this.twitterImp.recuperaUserStatus();
         return resultado;
+    }
+
+    @Override
+    public String logarApp(String usuario, String senha) throws RemoteException {
+        if (this.users.containsKey(usuario) && this.users.containsValue(senha)) {
+            String clientToken = criptografar(usuario + new Date().toString());
+            String[] userAndSenha = {usuario, senha};
+            if (!this.usersOnline.containsKey(clientToken)) {
+                this.usersOnline.put(clientToken, userAndSenha);
+                return clientToken;
+            } else {
+                throw new NotAuthenticatedException("Usuário já está conectado!");
+            }
+        }
+        throw new NotAuthenticatedException("Usuário ou senha incorreto!");
+    }
+
+    @Override
+    public void logoutApp(String clientToken) throws NotAuthenticatedException {
+        try {
+            verificaOnline(clientToken);
+        } catch (NotAuthenticatedException ex) {
+            throw ex;
+        }
+        this.usersOnline.remove(clientToken);
+    }
+
+    private void verificaOnline(String clientToken) throws NotAuthenticatedException {
+        if (!this.usersOnline.containsKey(clientToken)) {
+            throw new NotAuthenticatedException("Token inválido!");
+        }
     }
 
     public static String criptografar(String texto) {
@@ -166,48 +189,5 @@ public class Servidor implements ServidorRemoto {
      */
     public void setTwitter(TwitterImplementado twitter) {
         this.twitterImp = twitter;
-    }
-
-    /**
-     * @return the nome
-     */
-    public String getNome() {
-        return nome;
-    }
-
-    @Override
-    public String logarApp(String usuario, String senha) throws RemoteException {
-        if (this.users.containsKey(usuario)) {
-            if (this.users.containsValue(senha)) {
-                String clientToken = criptografar(usuario + new Date().toString());
-                if(this.verificaOnline(clientToken)){
-                    return "Usuario já está Conectado!!";
-                }
-                String[] userAndSenha = {usuario, senha};
-                if (this.usersOnline.containsKey(clientToken)) {
-                    this.usersOnline.put(clientToken, userAndSenha);
-                } else{
-                return "Falha ao gerar o token!";
-                }
-            }
-            return "Senha incorreta";
-        }
-        return "Usuario incorreto";
-    }
-
-    @Override
-    public String logoutApp(String clientToken) {
-        if (verificaOnline(clientToken)) {
-            this.usersOnline.remove(clientToken);
-            return "Cliente efetuou logout!";
-        }
-        return "Cliente não está conectado!";
-    }
-
-    private boolean verificaOnline(String clientToken) {
-        if (this.usersOnline.containsKey(clientToken)) {
-            return true;
-        }
-        return false;
     }
 }
