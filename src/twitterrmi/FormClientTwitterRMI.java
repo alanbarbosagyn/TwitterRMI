@@ -9,6 +9,8 @@ package twitterrmi;
  * @author Alan
  */
 public class FormClientTwitterRMI extends javax.swing.JFrame {
+    
+    
 
     /**
      * Creates new form FormClientTwitterRMI
@@ -141,6 +143,10 @@ public class FormClientTwitterRMI extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+        
+        
+        
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -174,13 +180,15 @@ public class FormClientTwitterRMI extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(FormClientTwitterRMI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        
         /*
          * Create and display the form
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
+                Controlador controle = new Controlador();
+                controle.obtemReferenciaObjRemoto();
                 new FormClientTwitterRMI().setVisible(true);
             }
         });
@@ -198,4 +206,6 @@ public class FormClientTwitterRMI extends javax.swing.JFrame {
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
+    
+    
 }
