@@ -83,7 +83,7 @@ public class ClientRMI {
                 switch (opcao) {
 
                     case 1:
-                        System.out.println(" Fazer atualização do status \n");
+                        System.out.println(" =============== FAZER ATUALIZACAO DO STATUS =============== ");
                        
                         in = new Scanner(System.in);
                         System.out.println(" Digite twitt para publicacao:");
@@ -93,7 +93,7 @@ public class ClientRMI {
                         break;
 
                     case 2:
-                        System.out.println(" Fazer pesquisa twitte \n");
+                        System.out.println(" =============== FAZER PESQUISA TWITTE =============== ");
 
                         in = new Scanner(System.in);
                         System.out.println(" Digite hashtag da pesquisa:");
@@ -104,27 +104,28 @@ public class ClientRMI {
 
 
                     case 3:
-                        System.out.println(" Status amigos  \n");
+                        System.out.println(" =============== STATUS DOS AMIGOS =============== ");
                         showTwitts(servidor.getFriendsStatus(token));
                         break;
 
                     case 4:
-                        System.out.println(" Status usuarios \n");
+                        System.out.println(" =============== MEU STATUS =============== ");
                         showTwitts(servidor.getUserStatus(token));
                         break;
 
                     case 5:
-                        System.out.println(" Conta twitte \n");
+                        System.out.println(" =============== CONTA TWITTE =============== ");
                         servidor.changingTwitterAccount();
                         break;
 
                     case 6:
-                        System.out.println(" Fazer logout \n");
+                        System.out.println(" =============== FAZER LOGOUT =============== ");
                         servidor.logoutApp(token);
+                        System.out.println(" Logout efetivado com sucesso ! ");
                         break;
 
                     case 7:
-                        System.out.println(" Sair ! ");
+                        System.out.println(" =============== APLICACAO FINALIZADA  =============== ");
                         flag = false;
                         break;
 
