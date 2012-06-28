@@ -56,35 +56,17 @@ public class ClientRMI {
             servidor = (ServidorRemoto) registry.lookup("rmi://" + nomeServidor);
             ServidorRemoto stubRemoto = (ServidorRemoto) UnicastRemoteObject.exportObject(servidor, 0);
 
-
             /*
-             * Nessa parte do codigo é feito a autenticação do usurio. O usuario
-             * nao sae desse laço enquanto não digitar o usuario e senha
+             * Nesse método autenticar() do codigo é feito a autenticação do usurio. O usuario
+             * nao sae dele enquanto não digitar o usuario e senha
              * corretos
              *
              */
+             autenticarUsuario();
 
             boolean flag = true;
-            while (flag != false) {
 
-                System.out.println("\n ===========  PROJETO TWITTER ===========\n ");
-                System.out.println(" ###AUTENTICAR USUARIO### ");
-                System.out.println(" Digite seu login e senha para entrar no sistema: ");
 
-                Scanner login = new Scanner(System.in);
-                String usuario = login.nextLine();
-                String senha = login.nextLine();
-                try {
-                    token = servidor.logarApp(usuario, senha);
-                    flag = false;
-                } catch (RemoteException ex) {
-                    System.err.println(" USUARIO OU SENHA INCORRETOS. DIGITE NOVAMENTE !");
-                    continue;
-                }
-
-                System.out.println("Token criptografado: " + token);
-
-            }
 
 
             /*
@@ -185,7 +167,85 @@ public class ClientRMI {
         }
         System.out.println("\n\n");
     }
+
+    public static void autenticarUsuario() throws RemoteException, NotBoundException {
+
+        String enderecoIPLocal = "127.0.0.1";
+        String nomeServidor = "Servidor";
+        int porta = 2020;
+        
+        String enderecoRegistry = enderecoIPLocal;
+        // String twitt = "Teste Básico da app";
+        //  String hashtag = "#asminapira";
+        String token = null;
+
+        ServidorRemoto servidor;
+        Registry registry = LocateRegistry.getRegistry(enderecoRegistry, porta);
+        servidor = (ServidorRemoto) registry.lookup("rmi://" + nomeServidor);
+        
+        boolean flag = true;
+        while (flag != false) {
+
+            System.out.println("\n ===========  PROJETO TWITTER ===========\n ");
+            System.out.println(" ###AUTENTICAR USUARIO### ");
+            System.out.println(" Digite seu login e senha para entrar no sistema: ");
+
+            Scanner login = new Scanner(System.in);
+            String usuario = login.nextLine();
+            String senha = login.nextLine();
+            try {
+                token = servidor.logarApp(usuario, senha);
+                flag = false;
+            } catch (RemoteException ex) {
+                System.err.println(" USUARIO OU SENHA INCORRETOS. DIGITE NOVAMENTE !");
+                continue;
+            }
+
+            System.out.println("Token criptografado: " + token);
+
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+//            while (flag != false) {
+//
+//                System.out.println("\n ===========  PROJETO TWITTER ===========\n ");
+//                System.out.println(" ###AUTENTICAR USUARIO### ");
+//                System.out.println(" Digite seu login e senha para entrar no sistema: ");
+//
+//                Scanner login = new Scanner(System.in);
+//                String usuario = login.nextLine();
+//                String senha = login.nextLine();
+//                try {
+//                    token = servidor.logarApp(usuario, senha);
+//                    flag = false;
+//                } catch (RemoteException ex) {
+//                    System.err.println(" USUARIO OU SENHA INCORRETOS. DIGITE NOVAMENTE !");
+//                    continue;
+//                }
+//
+//                System.out.println("Token criptografado: " + token);
+//
+//            }
+
+
+
+
+
+
+
+
+
 //
 //            token = servidor.logarApp("alan", "123456");
 //            System.out.println(token);
