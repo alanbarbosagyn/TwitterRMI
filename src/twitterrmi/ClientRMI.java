@@ -24,10 +24,13 @@ public class ClientRMI {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws RemoteException, NotBoundException {
         /**
          * Atenção: Esses dois parametros são de grande importancia.
          */
+      
+       
+        
         String enderecoIPLocal = "127.0.0.1";
         String nomeServidor = "Servidor";
         int porta = 2020;
@@ -57,9 +60,9 @@ public class ClientRMI {
             ServidorRemoto stubRemoto = (ServidorRemoto) UnicastRemoteObject.exportObject(servidor, 0);
 
             /*
-             * Nesse método autenticar() do codigo é feito a autenticação do usurio. O usuario
-             * nao sae dele enquanto não digitar o usuario e senha
-             * corretos
+             * Nesse método autenticar() do codigo é feito a autenticação do
+             * usurio. O usuario nao sae dele enquanto não digitar o usuario e
+             * senha corretos
              *
              */
              autenticarUsuario();
@@ -78,6 +81,13 @@ public class ClientRMI {
 
             flag = true;
             while (flag != false) {
+
+
+
+               
+                
+                   
+              
 
                 System.out.println("Digite sua opcao: \n");
                 System.out.println(" "
@@ -173,7 +183,7 @@ public class ClientRMI {
         String enderecoIPLocal = "127.0.0.1";
         String nomeServidor = "Servidor";
         int porta = 2020;
-        
+
         String enderecoRegistry = enderecoIPLocal;
         // String twitt = "Teste Básico da app";
         //  String hashtag = "#asminapira";
@@ -182,7 +192,7 @@ public class ClientRMI {
         ServidorRemoto servidor;
         Registry registry = LocateRegistry.getRegistry(enderecoRegistry, porta);
         servidor = (ServidorRemoto) registry.lookup("rmi://" + nomeServidor);
-        
+
         boolean flag = true;
         while (flag != false) {
 
@@ -206,17 +216,6 @@ public class ClientRMI {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
 //            while (flag != false) {
 //
 //                System.out.println("\n ===========  PROJETO TWITTER ===========\n ");
@@ -237,15 +236,6 @@ public class ClientRMI {
 //                System.out.println("Token criptografado: " + token);
 //
 //            }
-
-
-
-
-
-
-
-
-
 //
 //            token = servidor.logarApp("alan", "123456");
 //            System.out.println(token);
