@@ -132,7 +132,7 @@ public class Servidor implements ServidorRemoto {
     @Override
     public String logarApp(String usuario, String senha) throws RemoteException {
         if (this.users.containsKey(usuario) && this.users.containsValue(senha)) {
-            String clientToken = criptografar(usuario + new Date().toString());
+            String clientToken = criptografar(usuario);
             String[] userAndSenha = {usuario, senha};
             if (!this.usersOnline.containsKey(clientToken)) {
                 this.usersOnline.put(clientToken, userAndSenha);
