@@ -37,7 +37,7 @@ public class ClientRMI {
          */
 
         String enderecoRegistry = enderecoIPLocal;
-       // String twitt = "Teste Básico da app";
+        // String twitt = "Teste Básico da app";
         //  String hashtag = "#asminapira";
         String token = null;
 
@@ -57,13 +57,44 @@ public class ClientRMI {
             ServidorRemoto stubRemoto = (ServidorRemoto) UnicastRemoteObject.exportObject(servidor, 0);
 
 
-
-            System.out.println("\n ===========  PROJETO TWITTER ===========\n ");
-            System.out.println(" Autenticar usuario: ");
-                token = servidor.logarApp("maria", "maria");
-            System.out.println("Token criptografado: " + token);
+            /*
+             * Nessa parte do codigo é feito a autenticação do usurio. O usuario
+             * nao sae desse laço enquanto não digitar o usuario e senha
+             * corretos
+             *
+             */
 
             boolean flag = true;
+            while (flag != false) {
+
+                System.out.println("\n ===========  PROJETO TWITTER ===========\n ");
+                System.out.println(" ###AUTENTICAR USUARIO### ");
+                System.out.println(" Digite seu login e senha para entrar no sistema: ");
+
+                Scanner login = new Scanner(System.in);
+                String usuario = login.nextLine();
+                String senha = login.nextLine();
+                try {
+                    token = servidor.logarApp(usuario, senha);
+                    flag = false;
+                } catch (RemoteException ex) {
+                    System.err.println(" USUARIO OU SENHA INCORRETOS. DIGITE NOVAMENTE !");
+                    continue;
+                }
+
+                System.out.println("Token criptografado: " + token);
+
+            }
+
+
+            /*
+             * Nessa parte do codigo é feito a interação com o usurio. O usuario
+             * nao sae desse laço enquanto nao escolhar a opcao 7, que é para
+             * sair
+             *
+             */
+
+            flag = true;
             while (flag != false) {
 
                 System.out.println("Digite sua opcao: \n");
@@ -84,11 +115,11 @@ public class ClientRMI {
 
                     case 1:
                         System.out.println(" =============== FAZER ATUALIZACAO DO STATUS =============== ");
-                       
+
                         in = new Scanner(System.in);
                         System.out.println(" Digite twitt para publicacao:");
                         String twitt = in.nextLine();
-                        
+
                         servidor.updateStatus(twitt, token);
                         break;
 
@@ -135,33 +166,6 @@ public class ClientRMI {
             }
 
 
-//
-//            token = servidor.logarApp("alan", "123456");
-//            System.out.println(token);
-//            try{
-//            //servidor.logoutApp("alan");
-//            servidor.logoutApp(token);
-//            }catch(RemoteException e){
-//                System.out.println(e.getMessage());
-//            }
-
-
-
-
-//            showTwitts(servidor.getFriendsStatus("fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
-//            showTwitts(servidor.search("#android","fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
-//            showTwitts(servidor.getFriendsStatus("fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
-//            showTwitts(servidor.getUserStatus("fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
-
-
-
-
-
-
-//            showTwitts(servidor.getFriendsStatus(token));
-//            showTwitts(servidor.search("", token));
-//            showTwitts(servidor.getFriendsStatus(token));
-//            showTwitts(servidor.getUserStatus(token));
 
 
         } catch (NotBoundException ex) {
@@ -182,3 +186,20 @@ public class ClientRMI {
         System.out.println("\n\n");
     }
 }
+//
+//            token = servidor.logarApp("alan", "123456");
+//            System.out.println(token);
+//            try{
+//            //servidor.logoutApp("alan");
+//            servidor.logoutApp(token);
+//            }catch(RemoteException e){
+//                System.out.println(e.getMessage());
+//            }
+//            showTwitts(servidor.getFriendsStatus("fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
+//            showTwitts(servidor.search("#android","fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
+//            showTwitts(servidor.getFriendsStatus("fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
+//            showTwitts(servidor.getUserStatus("fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
+//            showTwitts(servidor.getFriendsStatus(token));
+//            showTwitts(servidor.search("", token));
+//            showTwitts(servidor.getFriendsStatus(token));
+//            showTwitts(servidor.getUserStatus(token));
