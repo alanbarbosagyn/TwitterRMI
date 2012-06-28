@@ -93,6 +93,7 @@ public class ClientRMI {
                             System.out.println(" Digite twitt para publicacao:");
                             String twitt = in.nextLine();
                             servidor.updateStatus(twitt, token);
+                            System.out.println(" TWITTE PUBLICADO COM SUCESSO ! ");
                             break;
 
                         case 2:
@@ -102,16 +103,19 @@ public class ClientRMI {
                             System.out.println(" Digite hashtag da pesquisa:");
                             String hashtag = in.nextLine();
                             showTwitts(servidor.search(hashtag, token));
+                            
                             break;
 
                         case 3:
                             System.out.println(" =============== STATUS DOS AMIGOS =============== ");
                             showTwitts(servidor.getFriendsStatus(token));
+                           
                             break;
 
                         case 4:
                             System.out.println(" =============== MEU STATUS =============== ");
                             showTwitts(servidor.getUserStatus(token));
+                            
                             break;
 
                         case 5:
@@ -122,13 +126,16 @@ public class ClientRMI {
                         case 6:
                             System.out.println(" =============== FAZER LOGOUT =============== ");
                             servidor.logoutApp(token);
+                            System.out.println(" LOGOUT ENCERRADO COM SUCESSO ! ");
                             token = null;
-                            System.out.println(" Logout efetivado com sucesso ! ");
+                            
                             break;
 
                         case 7:
-                            System.out.println(" =============== APLICACAO FINALIZADA  =============== ");
+                            System.out.println(" ===============  FINALIZAR APLICACAO  =============== ");
+                            System.out.println(" APLICACAO ENCERRADO COM SUCESSO ! ");
                             System.exit(1);
+                           
                             break;
                     }
                 }
@@ -157,11 +164,18 @@ public class ClientRMI {
         System.out.println("\n ===========  PROJETO TWITTER ===========\n ");
         System.out.println(" ###AUTENTICAR USUARIO### ");
         System.out.println(" Digite seu login e senha para entrar no sistema: ");
-
+ 
+      
+        
         Scanner login = new Scanner(System.in);
         String token = null;
+        
         String usuario = login.nextLine();
+        
+        
+        System.out.println(" USUARIO: " + usuario);
         String senha = login.nextLine();
+        System.out.println(" SENHA: " + senha);
         try {
             token = servidor.logarApp(usuario, senha);
         } catch (RemoteException ex) {
