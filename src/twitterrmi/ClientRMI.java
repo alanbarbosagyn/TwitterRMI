@@ -11,6 +11,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,18 +26,19 @@ public class ClientRMI {
      */
     public static void main(String[] args) {
         /**
-         *  Atenção: Esses dois parametros são de grande importancia. 
+         * Atenção: Esses dois parametros são de grande importancia.
          */
-        
         String enderecoIPLocal = "127.0.0.1";
         String nomeServidor = "Servidor";
         int porta = 2020;
-        
-        /* ########################  */
-        
+
+        /*
+         * ########################
+         */
+
         String enderecoRegistry = enderecoIPLocal;
-        String twitt = "Teste Básico da app";
-        String hashtag = "#asminapira";
+       // String twitt = "Teste Básico da app";
+        //  String hashtag = "#asminapira";
         String token = null;
 
         try {
@@ -51,22 +53,115 @@ public class ClientRMI {
             }
 
             ServidorRemoto servidor;
-            servidor = (ServidorRemoto) registry.lookup("rmi://"+nomeServidor);
+            servidor = (ServidorRemoto) registry.lookup("rmi://" + nomeServidor);
             ServidorRemoto stubRemoto = (ServidorRemoto) UnicastRemoteObject.exportObject(servidor, 0);
 
-            token = servidor.logarApp("alan", "123456");
-            System.out.println(token);
+
+
+            System.out.println("\n ===========  PROJETO TWITTER ===========\n ");
+            System.out.println(" Autenticar usuario: ");
+                token = servidor.logarApp("maria", "maria");
+            System.out.println("Token criptografado: " + token);
+
+            boolean flag = true;
+            while (flag != false) {
+
+                System.out.println("Digite sua opcao: \n");
+                System.out.println(" "
+                        + "1 - updateStatus \n"
+                        + " 2 - search \n"
+                        + " 3 - getFriendsStatus \n"
+                        + " 4 - getUserStatus \n"
+                        + " 5 - changingTwitterAccount \n"
+                        + " 6 - logoutApp \n"
+                        + " 7 - Sair \n");
+                Scanner in = new Scanner(System.in);
+                System.out.println("Opcao: ");
+                int opcao = in.nextInt();
+
+
+                switch (opcao) {
+
+                    case 1:
+                        System.out.println(" Fazer atualização do status \n");
+                       
+                        in = new Scanner(System.in);
+                        System.out.println(" Digite twitt para publicacao:");
+                        String twitt = in.nextLine();
+                        
+                        servidor.updateStatus(twitt, token);
+                        break;
+
+                    case 2:
+                        System.out.println(" Fazer pesquisa twitte \n");
+
+                        in = new Scanner(System.in);
+                        System.out.println(" Digite hashtag da pesquisa:");
+                        String hashtag = in.nextLine();
+
+                        showTwitts(servidor.search(hashtag, token));
+                        break;
+
+
+                    case 3:
+                        System.out.println(" Status amigos  \n");
+                        showTwitts(servidor.getFriendsStatus(token));
+                        break;
+
+                    case 4:
+                        System.out.println(" Status usuarios \n");
+                        showTwitts(servidor.getUserStatus(token));
+                        break;
+
+                    case 5:
+                        System.out.println(" Conta twitte \n");
+                        servidor.changingTwitterAccount();
+                        break;
+
+                    case 6:
+                        System.out.println(" Fazer logout \n");
+                        servidor.logoutApp(token);
+                        break;
+
+                    case 7:
+                        System.out.println(" Sair ! ");
+                        flag = false;
+                        break;
+
+                }
+
+
+            }
+
+
+//
+//            token = servidor.logarApp("alan", "123456");
+//            System.out.println(token);
 //            try{
 //            //servidor.logoutApp("alan");
 //            servidor.logoutApp(token);
 //            }catch(RemoteException e){
 //                System.out.println(e.getMessage());
 //            }
-            
-            showTwitts(servidor.getFriendsStatus("fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
-            showTwitts(servidor.search("#android","fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
-            showTwitts(servidor.getFriendsStatus("fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
-            showTwitts(servidor.getUserStatus("fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
+
+
+
+
+//            showTwitts(servidor.getFriendsStatus("fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
+//            showTwitts(servidor.search("#android","fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
+//            showTwitts(servidor.getFriendsStatus("fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
+//            showTwitts(servidor.getUserStatus("fqfsÁjidOzsd7;d6.}78},,dGWYd7,67"));
+
+
+
+
+
+
+//            showTwitts(servidor.getFriendsStatus(token));
+//            showTwitts(servidor.search("", token));
+//            showTwitts(servidor.getFriendsStatus(token));
+//            showTwitts(servidor.getUserStatus(token));
+
 
         } catch (NotBoundException ex) {
             Logger.getLogger(ClientRMI.class.getName()).log(Level.SEVERE, null, ex);
@@ -78,9 +173,9 @@ public class ClientRMI {
             System.exit(0);
         }
     }
-    
-    public static void showTwitts(List<String> twitts){
-        for(String twiit : twitts){
+
+    public static void showTwitts(List<String> twitts) {
+        for (String twiit : twitts) {
             System.out.println(twiit);
         }
         System.out.println("\n\n");
